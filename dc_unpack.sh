@@ -1,12 +1,15 @@
 #!/bin/bash
-source=$1
-destination=$2
+mode=$1
+source=$2
+destination=$3
 
 #check if variables are entered
 if [ "$destination" = "" ]
 then
-echo "no source or destination directory entered"
-echo "usage: ./dc_unpack.sh <SOURCE dir> <DESTINATION dir>"
+echo "no mode,source or destination directory entered"
+echo "usage: ./dc_unpack.sh <MODE> <SOURCE dir> <DESTINATION dir>"
+echo "mode d: use directories as input"
+echo "mode f: use files as input"
 exit 1
 fi
 
@@ -20,11 +23,31 @@ destination=$(echo "$(cd "$(dirname "$destination")"; pwd)/$(basename "$destinat
 mkdir -p "$destination"
 
 #remove potentially existing file & create new file for list of extracted games
-##rm "$destination"/"extracted.txt"
+#first check if already exists
+if [ -f "$destination"/"extracted.txt" ] 
+then
+rm "$destination"/"extracted.txt"
 touch "$destination"/"extracted.txt"
+else
+touch "$destination"/"extracted.txt"
+fi
+
 
 #Create a list of all games directories
-ls -d */ | cut -f1 -d'/' > "$destination"/list.txt
+##obsolete 
+##ls -d */ | cut -f1 -d'/' > "$destination"/list.txt
+
+#check mode file - dir
+if [ "$mode" = d ]
+then
+#list all directories in list
+ls "$source" -p | grep / | cut -f1 -d'/' > "$destination"/list.txt
+else
+#list all files in list
+ls "$source" -p | grep -v / | cut -f1 -d'/' > "$destination"/list.txt
+fi
+
+exit 1
 
 #uniq
 #cat test1.txt | sort | uniq
@@ -38,7 +61,6 @@ else
 mkdir "$destination"/"$game" -p
 find "$source"/"$game" -name "*.001" -exec 7z x {} -o"$destination/$game" \;
 find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination/$game" \;
-#unrar evt no overwrite -o-
 find "$source"/"$game" -name "*.part1.rar" -exec unrar x {} "$destination/$game/" \;
 find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination/$game/" \;
 echo "$game" >> "$destination"/"extracted.txt"
