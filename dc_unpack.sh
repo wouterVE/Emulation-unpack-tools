@@ -22,8 +22,7 @@ destination=$(echo "$(cd "$(dirname "$destination")"; pwd)/$(basename "$destinat
 #create dir to extract games to
 mkdir -p "$destination"
 
-#remove potentially existing file & create new file for list of extracted games
-#first check if already exists
+#check if list of extracted games already exists & remove it - otherwise just create one
 if [ -f "$destination"/"extracted.txt" ] 
 then
 rm "$destination"/"extracted.txt"
@@ -32,10 +31,6 @@ else
 touch "$destination"/"extracted.txt"
 fi
 
-
-#Create a list of all games directories
-##obsolete 
-##ls -d */ | cut -f1 -d'/' > "$destination"/list.txt
 
 #check mode file - dir
 if [ "$mode" = d ]
@@ -47,10 +42,6 @@ else
 ls "$source" -p | grep -v / | cut -f1 -d'/' > "$destination"/list.txt
 fi
 
-exit 1
-
-#uniq
-#cat test1.txt | sort | uniq
 
 #Loop for unpacking the games in directory
 while IFS= read -r game ; do
@@ -58,6 +49,17 @@ while IFS= read -r game ; do
 if [ -d "$destination"/"$game" ];then
 echo "$game already exists! Skipping.."
 else
+#check entered mode
+if [ "$mode" = "f" ] 
+then
+#file mode
+find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination" \;
+find "$source"/"$game" -name "*.part01.rar" -exec unrar x -y {} "$destination" \;
+echo "$game" >> "$destination"/"extracted.txt"
+fi
+if [ "$mode" = "d" ]
+then
+#dir mode
 mkdir "$destination"/"$game" -p
 find "$source"/"$game" -name "*.001" -exec 7z x {} -o"$destination/$game" \;
 find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination/$game" \;
@@ -65,14 +67,27 @@ find "$source"/"$game" -name "*.part1.rar" -exec unrar x {} "$destination/$game/
 find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination/$game/" \;
 echo "$game" >> "$destination"/"extracted.txt"
 fi
+
+fi
 done < "$destination"/list.txt
 
 
 #check for ecm in extracted file & unecm them
+if [ "$mode" = "f" ]
+then
+#file mode
+echo
+fi
+
+if [ "$mode" = "d" ]
+then
+#dir mode
 while IFS= read -r game ; do
 find "$destination"/"$game" -name "*.ecm" -exec unecm {} "$destination"/"$game"/"$game".cdi \;
 find "$destination"/"$game" -name "*.ecm" -exec rm {} \;
 done < "$destination"/list.txt
+fi
+
 
 echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
 cat "$destination"/"extracted.txt"
