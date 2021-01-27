@@ -19,6 +19,10 @@ destination=$(echo "$(cd "$(dirname "$destination")"; pwd)/$(basename "$destinat
 #see https://stackoverflow.com/a/31605674/9240687
 
 
+################
+if false;then
+###############
+
 #create dir to extract games to
 mkdir -p "$destination"
 
@@ -54,7 +58,6 @@ if [ "$mode" = "f" ]
 then
 #file mode
 find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination" \;
-find "$source"/"$game" -name "*.part01.rar" -exec unrar x -y {} "$destination" \;
 echo "$game" >> "$destination"/"extracted.txt"
 fi
 if [ "$mode" = "d" ]
@@ -87,6 +90,82 @@ find "$destination"/"$game" -name "*.ecm" -exec unecm {} "$destination"/"$game"/
 find "$destination"/"$game" -name "*.ecm" -exec rm {} \;
 done < "$destination"/list.txt
 fi
+
+################
+fi
+###############
+
+#partially rar archives (file + dir mode)
+
+
+
+#multiple_cmd() { 
+#    tail -n1 $1; 
+#    ls $1 
+#}; 
+#export -f multiple_cmd; 
+#find *.txt -exec bash -c 'multiple_cmd "$0"' {} \;
+
+#https://stackoverflow.com/questions/5119946/find-exec-with-multiple-commands
+
+#find . -name "*.txt" -exec echo {} \; -exec grep banana {} \;
+
+#function to extract partially archives
+##partarch() {
+
+#};
+#export -f partarch;
+#find "$destination" -name "*part01.rar" -exec unrardir=$(dirname "$partrar"); -exec echo "$unrardir" \;
+#exit 1
+
+
+#find & extract partially archives
+#https://stackoverflow.com/a/9612560
+
+#RAR
+find "$destination" -name "*part01.rar" -print0 | while read -d $'\0' partrar
+do
+   unrardir=$(dirname "$partrar")
+   #unrar archive
+   unrar x -y "$partrar" "$unrardir/"
+   #delete partially archives
+   find "$unrardir/" -name "*.part*.rar" -exec rm -i -f {} \;
+done
+
+#001
+find "$destination" -name "*.001" -print0 | while read -d $'\0' partrar
+do
+   unrardir=$(dirname "$partrar")
+   #unrar archive
+   unrar x -y "$partrar" "$unrardir/"
+   #delete partially archives
+   find "$unrardir/" -name "*.0??" -exec rm -i -f {} \;
+done
+
+#rar
+find "$destination" -name "*.rar" -print0 | while read -d $'\0' partrar
+do
+   unrardir=$(dirname "$partrar")
+   #unrar archive
+   unrar x -y "$partrar" "$unrardir/"
+   #delete partially archives
+   find "$unrardir/" -name "*.r??" -exec rm -i -f {} \;
+done
+
+
+
+
+###OLD CODE NOT WORKING WITH WHITESPACES
+#for partrar in "$(find "$destination" -name "*part01.rar")"; do
+#find existing folder for the game
+#unrardir=$(dirname "$partrar")
+#echo "$partrar"
+#echo "$unrardir"
+#unrar archive
+##unrar x -y "$partrar" "$unrardir/"
+#delete partially archives
+##find "$unrardir/" -name "*.part*.rar" -exec rm -i -f {} \;
+#done
 
 
 echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
