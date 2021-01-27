@@ -7,7 +7,7 @@ Short explanation of the usage:
 
 Originally created to unpack my Dreamcast rom collection but could be used for other systems as well. 
 You will need to have the following dependencies:
-* unecm
+* unecm (1)
 * unrar
 * 7z
 * unzip
@@ -54,4 +54,10 @@ usage: ./nrgbatch.sh <DIR>
 ```
 With `<DIR>` the directory where your `.nrg` files are located.
 After all files are converted you also have the possibility to delete the .nrg files (WIP - not implemented yet)
+
+<p>
+   (1) Instructions for Debian/Ubuntu:
+   1 Download source from https://raw.githubusercontent.com/MaddTheSane/ECMGUI/master/unecm/unecm.c
+   2 compile using the folowing command `gcc -o unecm unecm.c` 
+   3 Copy the unecm file to `/usr/bin` so you can call the program system-wide (`cp unecm /usr/bin`)
 <br><br>*All written & tested on on debian 10 - possibly also works under other distros*
