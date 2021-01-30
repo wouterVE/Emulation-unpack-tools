@@ -121,6 +121,8 @@ do
    unrar x -y "$partrar" "$unrardir/"
    #delete partially archives
    find "$unrardir/" -name "*.r??" -exec rm -i -f {} \;
+   #delete .sfv files
+   find "$destination" -name "*.sfv" -exec rm -i -f {} \;
 done
 
 
