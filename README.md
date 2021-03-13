@@ -38,7 +38,7 @@ The syntax is as follows: <br>
 ```
 * `<SOURCE dir>`: The directory containing your roms
 * `<DESTINATION dir>`: The (new) directory to where you want to extract your roms
-* <OPTION m>: creates separate directories to extract each archive to. Only use when the archives don't containt any folder and only in file mode
+* `<OPTION m>`: creates separate directories to extract each archive to. Only use when the archives don't containt any folder and only in file mode
 
 
 This script will do the following steps:
