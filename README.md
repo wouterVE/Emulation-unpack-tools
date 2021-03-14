@@ -57,8 +57,10 @@ With `<DIR>` the directory where your `.nrg` files are located.
 After all files are converted you also have the possibility to delete the .nrg files (WIP - not implemented yet)
 
 
-   unecm Instructions for Debian/Ubuntu:
+### `unecm` installation instructions for Debian/Ubuntu
    1. Download source from https://raw.githubusercontent.com/MaddTheSane/ECMGUI/master/unecm/unecm.c
    2. compile using the folowing command `gcc -o unecm unecm.c` 
    3. Copy the unecm file to `/usr/bin` so you can call the program system-wide (`cp unecm /usr/bin`)
 <br><br>*All written & tested on on debian 10 - possibly also works under other distros*
+Please test this first on a copy of soms roms if the given mode & option is correct <br>
+I have not tested every possible scenario so code could be improved 
