@@ -83,7 +83,10 @@ if [ "$mk_dir" = "m" ]
  else
  #do NOT make separate dirs
  find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination" \;
- echo "$game" >> "$destination"/"extracted.txt"
+ ######extract extension 
+ filename=$(basename -- "$game")
+ gamename="${filename%.*}"
+ echo "$gamename" >> "$destination"/"extracted.txt"
  fi
 
 fi
@@ -142,10 +145,10 @@ do
    find "$destination" -name "*.SFV" -exec rm -i -f {} \;
 done
 
-#check for ecm & nrg in extracted file & unecm them
+#check for ecm, nrg and mdf in extracted file & convert them
 if [ "$mode" = "f" ]
 then
-#file mode
+#efile mode
 while IFS= read -r game ; do
 #ecm
 find "$destination"/"$game" -name "*.ecm" -exec unecm {} "$destination"/"$game"/"$game".cdi \;
@@ -153,6 +156,9 @@ find "$destination"/"$game" -name "*.ecm" -exec rm {} \;
 #nrg
 find "$destination"/"$game" -name "*.nrg" -exec nrg2iso {} "$destination"/"$game"/"$game".iso \;
 find "$destination"/"$game" -name "*.nrg" -exec rm {} \;
+#mdf
+find "$destination"/"$game" -name "*.mdf" -exec mdf2iso --cue {} "$destination"/"$game"/"$game".iso \;
+find "$destination"/"$game" -name "*.md*" -exec rm {} \;
 done <"$destination"/extracted.txt
 echo
 fi
@@ -167,6 +173,9 @@ find "$destination"/"$game" -name "*.ecm" -exec rm {} \;
 #nrg
 find "$destination"/"$game" -name "*.nrg" -exec nrg2iso {} "$destination"/"$game"/"$game".iso \;
 find "$destination"/"$game" -name "*.nrg" -exec rm {} \;
+#mdf
+find "$destination"/"$game" -name "*.mdf" -exec mdf2iso --cue {} "$destination"/"$game"/"$game".iso \;
+find "$destination"/"$game" -name "*.md*" -exec rm {} \;
 done < "$destination"/list.txt
 fi
 
