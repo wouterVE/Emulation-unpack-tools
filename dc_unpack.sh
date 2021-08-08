@@ -66,8 +66,12 @@ if [ "$mk_dir" = "m" ]
  filename=$(basename -- "$game")
  extension="${filename##*.}"
  gamedir="${filename%.*}"
+
  mkdir "$destination"/"$gamedir"
- unrar x -y "$source"/"$game" "$destination"/"$gamedir"
+ find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination"/"$gamedir" \;
+ find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination"/"$gamedir" \;
+ find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination"/"$gamedir" \;
+ find "$source"/"$game" -name "*.part1.rar" -exec unrar x {} "$destination"/"$gamedir" \;
  echo "$gamedir" >> "$destination"/"extracted.txt"
 
 #13/03/2021:Temporarily disable -> check for which files this code applies to
