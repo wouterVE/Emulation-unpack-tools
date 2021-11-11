@@ -12,6 +12,7 @@ echo "usage: ./dc_unpack.sh <MODE> <SOURCE dir> <DESTINATION dir> <OPTION: (m)>"
 echo "mode=d: use directories as input"
 echo "mode=f: use files as input"
 echo "m: create separate directories for each game - only use when archive does not contain directory"
+echo "example: ./dc_unpack.sh f inputdir outputdir m"
 exit 1
 fi
 
