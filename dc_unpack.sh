@@ -71,7 +71,7 @@ if [ "$mk_dir" = "m" ]
  mkdir "$destination"/"$gamedir"
  find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination"/"$gamedir" \;
  find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination"/"$gamedir" \;
- find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination"/"$gamedir" \;
+ find "$source"/"$game" -name "*.7z" -exec 7z x {} -y -o"$destination"/"$gamedir" \;
  find "$source"/"$game" -name "*.part1.rar" -exec unrar x -y {} "$destination"/"$gamedir" \;
  echo "$gamedir" >> "$destination"/"extracted.txt"
 
@@ -89,7 +89,7 @@ if [ "$mk_dir" = "m" ]
  #file mode & do NOT make separate dirs
  find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination" \;
  find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination" \; 
- find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination" \;
+ find "$source"/"$game" -name "*.7z" -exec 7z x {} -y -o"$destination" \;
  find "$source"/"$game" -name "*.part1.rar" -exec unrar x -y {} "$destination" \;
 
 
@@ -105,8 +105,8 @@ if [ "$mode" = "d" ]
 then
 #dir mode
 mkdir "$destination"/"$game" -p
-find "$source"/"$game" -name "*.001" -exec 7z x {} -o"$destination/$game" \;
-find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination/$game" \;
+find "$source"/"$game" -name "*.001" -exec 7z x {} -y -o"$destination/$game" \;
+find "$source"/"$game" -name "*.7z" -exec 7z x {} -y -o"$destination/$game" \;
 find "$source"/"$game" -name "*.part1.rar" -exec unrar x {} "$destination/$game/" \;
 find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination/$game/" \;
 echo "$game" >> "$destination"/"extracted.txt"
