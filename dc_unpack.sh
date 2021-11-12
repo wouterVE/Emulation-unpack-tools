@@ -60,7 +60,7 @@ then
  #check if mk_dir option is entered
 if [ "$mk_dir" = "m" ]
  then
- # make separate dirs for each game
+ # file mode & make separate dirs for each game
 
  # extract extension
  # see https://stackoverflow.com/a/965072
@@ -72,7 +72,7 @@ if [ "$mk_dir" = "m" ]
  find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination"/"$gamedir" \;
  find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination"/"$gamedir" \;
  find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination"/"$gamedir" \;
- find "$source"/"$game" -name "*.part1.rar" -exec unrar x {} "$destination"/"$gamedir" \;
+ find "$source"/"$game" -name "*.part1.rar" -exec unrar x -y {} "$destination"/"$gamedir" \;
  echo "$gamedir" >> "$destination"/"extracted.txt"
 
 #13/03/2021:Temporarily disable -> check for which files this code applies to
@@ -86,9 +86,14 @@ if [ "$mk_dir" = "m" ]
 #done
 
  else
- #do NOT make separate dirs
+ #file mode & do NOT make separate dirs
  find "$source"/"$game" -name "*.rar" -exec unrar x -y {} "$destination" \;
- ######extract extension 
+ find "$source"/"$game" -name "*.zip" -exec unzip {} -d "$destination" \; 
+ find "$source"/"$game" -name "*.7z" -exec 7z x {} -o"$destination" \;
+ find "$source"/"$game" -name "*.part1.rar" -exec unrar x -y {} "$destination" \;
+
+
+######extract extension 
  filename=$(basename -- "$game")
  gamename="${filename%.*}"
  echo "$gamename" >> "$destination"/"extracted.txt"
@@ -118,14 +123,14 @@ done < "$destination"/list.txt
 
 #RAR
 #13/03/2021: possibly not necessary as *.rar would also extract *part01.rar
-find "$destination" -name "*part01.rar" -print0 | while read -r -d $'\0' partrar
-do
-   unrardir=$(dirname "$partrar")
+##find "$destination" -name "*part01.rar" -print0 | while $read -r -d $'\0' partrar
+#do
+#   unrardir=$(dirname "$partrar")
    #unrar archive
-   unrar x -y "$partrar" "$unrardir/"
+#   unrar x -y "$partrar" "$unrardir/"
    #delete partially archives
-   find "$unrardir/" -name "*.part*.rar" -exec rm -i -f {} \;
-done
+#   find "$unrardir/" -name "*.part*.rar" -exec rm -i -f {} \;
+#done
 
 #001
 find "$destination" -name "*.001" -print0 | while read -r -d $'\0' partrar
@@ -153,17 +158,17 @@ done
 #check for ecm, nrg and mdf in extracted file & convert them
 if [ "$mode" = "f" ]
 then
-#efile mode
+#file mode
 while IFS= read -r game ; do
 #ecm
-find "$destination"/"$game" -name "*.ecm" -exec unecm {} "$destination"/"$game"/"$game".cdi \;
-find "$destination"/"$game" -name "*.ecm" -exec rm {} \;
+find "$destination" -name "*.ecm" -exec unecm {} "$destination"/"$game"/"$game".cdi \;
+find "$destination" -name "*.ecm" -exec rm {} \;
 #nrg
-find "$destination"/"$game" -name "*.nrg" -exec nrg2iso {} "$destination"/"$game"/"$game".iso \;
-find "$destination"/"$game" -name "*.nrg" -exec rm {} \;
+find "$destination" -name "*.nrg" -exec nrg2iso {} "$destination"/"$game"/"$game".iso \;
+find "$destination" -name "*.nrg" -exec rm {} \;
 #mdf
-find "$destination"/"$game" -name "*.mdf" -exec mdf2iso --cue {} "$destination"/"$game"/"$game".iso \;
-find "$destination"/"$game" -name "*.md*" -exec rm {} \;
+find "$destination" -name "*.mdf" -exec mdf2iso --cue {} "$destination"/"$game"/"$game".iso \;
+find "$destination" -name "*.md*" -exec rm {} \;
 done <"$destination"/extracted.txt
 echo
 fi
