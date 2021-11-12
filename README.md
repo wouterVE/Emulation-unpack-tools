@@ -5,7 +5,7 @@ Short explanation of the usage:
 
 ## dc_unpack.sh
 
-Originally created to unpack my Dreamcast rom collection but could be used for other systems as well. 
+Originally created to unpack my Dreamcast rom collection but later expanded to use for other (cd-based) systems as well. 
 You will need to have the following dependencies:
 * unecm (instructions see below)
 * unrar
