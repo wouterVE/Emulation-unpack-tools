@@ -1,19 +1,60 @@
 #!/bin/bash
-mode=$1
-source=$2
-destination=$3
-mk_dir=$4
 
-#check if variables are entered
-if [ "$destination" = "" ]
+############################################################
+# help                                                     #
+############################################################
+Help()
+{
+   # Display help
+   echo "Script to automatically unpack your iso romsets to the correct format"
+   echo
+   echo "Syntax: ./dc_unpack.sh [-s|d|M|m|p|h]"
+   echo "options:"
+   echo "m     choose input mode | d use directories as input | f: use files as input"
+   echo "M     create separate directories for each game - use only when archive does not contain directories"
+   echo "p     use this option when extracting PS2 isos"
+   echo "s     source directory"
+   echo "d     destination directory"
+   echo
+   echo "example: ./dc_unpack.sh -s dcroms -d dcroms/extracted -m d -M -p"
+}
+
+############################################################
+
+
+while getopts ":hs:d:Mm:p" option; do
+  case "$option" in
+      h) # display help
+         Help
+         exit;;
+      s) # Source
+         source="$OPTARG";;
+      d) # destination
+         destination="$OPTARG";;
+      M) #mkdir
+         mk_dir="m";;
+      m) #mode
+         mode="$OPTARG";;
+      p) # ps2
+         ps2="1";;
+      \?) # Invalid option
+         echo "Error: Invalid option"
+         exit;;
+    esac
+done
+#echo mode "$mode"
+#echo source "$source"
+#echo destination "$destination"
+#echo mk_dir "$mk_dir"
+#echo PS2 "$ps2"
+
+
+if [ -z "$source" ] || [ -z "$destination" ]
 then
-echo "no mode,source or destination directory entered"
-echo "usage: ./dc_unpack.sh <MODE> <SOURCE dir> <DESTINATION dir> <OPTION: (m)>"
-echo "mode=d: use directories as input"
-echo "mode=f: use files as input"
-echo "m: create separate directories for each game - only use when archive does not contain directory"
-echo "example: ./dc_unpack.sh f inputdir outputdir m"
-exit 1
+      echo "please enter valid source & destination"
+      exit 1
+else
+      echo > /dev/null
 fi
 
 #convert to full path
@@ -193,3 +234,9 @@ fi
 
 echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
 cat "$destination"/"extracted.txt"
+
+
+
+##temp auto PS2 unpack
+##cd "$destination"
+##/home/wouter/batch/Emulation-unpack-tools/ps2_unpack.sh
