@@ -72,7 +72,7 @@ ps2()
     read -p "Do you want to delete the remaining ISO folders (y/n)? " yn
     case $yn in
  #exclude directories CD & DVD see https://stackoverflow.com/a/4210072
-        [Yy]* ) find "$destination" -mindepth 1 -type d  -not \( -path "$destination"/CD -o -path "$destination"/DVD \) -exec rm -rf {} \; > /dev/null 2>&1 ;;
+        [Yy]* ) find "$destination" -mindepth 1 -type d  -not \( -path "$destination"/CD -o -path "$destination"/DVD \) -exec rm -rf {} \; > /dev/null 2>&1 & exit 1 ;;
         [Nn]* ) exit 1;;
         * ) echo "press y or n";;
     esac
