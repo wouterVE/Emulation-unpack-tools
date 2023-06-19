@@ -20,8 +20,71 @@ Help()
 }
 
 ############################################################
+ps2()
+{
+   find "$destination" -mindepth 2 -type f \( -iname \*.cue -o -iname \*.bin -o -iname \*.iso \)  -exec mv {} "$destination" \;
+   #\( -iname \*.cue -o -iname \*.bin \)
+
+   while read -r game; do
+
+   name=$(echo "$game" | rev | cut -f2- -d '.' | rev)
+   #to prevent filenames with . in the name to be cut to early (e.g. sega ages vol. X.cue)
+   #see https://unix.stackexchange.com/a/217630/308419
+   #echo "$name"
+   #check if .bin file exists
+ if [ -f  "$destination"/"$name".bin ]
+  then
+   bchunk "$destination"/"$name".bin "$destination"/"$name".cue "$destination"/"$name"
+  else
+   echo "skipping "$name".iso"
+ fi
+
+ done < "$destination"/list.txt
+
+   #create folder CD & DVD
+   for dir in CD DVD
+    do
+   #first check if already exist
+      if [ -d "$destination"/"$dir" ]
+       then
+      echo "$dir already exists!"
+       else
+      echo "create $dir"
+      mkdir "$destination"/"$dir"
+      fi
+    done
+ echo "moving iso's to correct folder"
+ # move iso's up to 700MB to folder CD
+ find "$destination" -maxdepth 1 -type f -name "*.iso" -size -701M -exec mv -f {} "$destination"/CD/ \;
+ # move iso's up to 700MB to folder CD
+ find "$destination" -maxdepth 1 -type f -name "*.iso"  -exec mv -f {} "$destination"/DVD/ \;
+
+ #Cleanup .bin & .cue files
+ find "$destination" -type f \( -iname \*.cue -o -iname \*.bin \)  -exec rm {} \;
+ #multiple extensions see: https://unix.stackexchange.com/a/15309/308419
+
+ #show extracted games
+ echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
+ cat "$destination"/"extracted.txt"
+
+ #Cleanup iso directories
+ while true; do
+    read -p "Do you want to delete the remaining ISO folders (y/n)? " yn
+    case $yn in
+ #exclude directories CD & DVD see https://stackoverflow.com/a/4210072
+        [Yy]* ) find "$destination" -mindepth 1 -type d  -not \( -path "$destination"/CD -o -path "$destination"/DVD \) -exec rm -rf {} \; > /dev/null 2>&1 ;;
+        [Nn]* ) exit 1;;
+        * ) echo "press y or n";;
+    esac
+done
 
 
+}
+
+
+
+
+############################################################
 while getopts ":hs:d:Mm:p" option; do
   case "$option" in
       h) # display help
@@ -49,9 +112,11 @@ done
 #echo PS2 "$ps2"
 
 
-if [ -z "$source" ] || [ -z "$destination" ]
+if [ -z "$source" ] || [ -z "$destination" ] || [ -z "$mode" ]
 then
-      echo "please enter valid source & destination"
+      echo "please enter valid source, destination & mode"
+      echo
+      Help
       exit 1
 else
       echo > /dev/null
@@ -101,7 +166,7 @@ then
  #check if mk_dir option is entered
 if [ "$mk_dir" = "m" ]
  then
- # file mode & make separate dirs for each game
+ ### file mode & make separate dirs for each game
 
  # extract extension
  # see https://stackoverflow.com/a/965072
@@ -231,10 +296,13 @@ done < "$destination"/list.txt
 fi
 
 
-
-echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
-cat "$destination"/"extracted.txt"
-
+ if [ "$ps2" = 1 ]
+  then
+   ps2
+  else
+   echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
+   cat "$destination"/"extracted.txt"
+ fi
 
 
 ##temp auto PS2 unpack

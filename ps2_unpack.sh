@@ -1,5 +1,7 @@
 #!/bin/bash
-find . -mindepth 2 -type f \( -iname \*.cue -o -iname \*.bin -o -iname \*.iso \)  -exec mv {} . \;
+
+#move all game files to root of destination dir
+find . -mindepth 2 -type f \( -iname \*.cue -o -iname \*.bin -o -iname \*.iso \)  -exec mv {} "$destination" \;
 #\( -iname \*.cue -o -iname \*.bin \)
 
 while read -r game; do
