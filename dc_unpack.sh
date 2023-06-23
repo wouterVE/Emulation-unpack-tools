@@ -63,6 +63,10 @@ ps2()
  find "$destination" -type f \( -iname \*.cue -o -iname \*.bin \)  -exec rm {} \;
  #multiple extensions see: https://unix.stackexchange.com/a/15309/308419
 
+ # remove 01 in the filename of the isos
+ 
+ find "$destination" -type f -name *01* -exec bash -c 'new_filename="${1:0:-6}${1:(-4)}"; mv "$1" "$new_filename"' _ {} \;
+
  #show extracted games
  echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
  cat "$destination"/"extracted.txt"
@@ -78,9 +82,7 @@ ps2()
     esac
 done
 
-
 }
-
 
 
 
