@@ -10,11 +10,11 @@ Help()
    echo
    echo "Syntax: ./dc_unpack.sh [-s|d|M|m|p|h]"
    echo "options:"
-   echo "m     choose input mode | d use directories as input | f: use files as input"
-   echo "M     create separate directories for each game - use only when archive does not contain directories"
-   echo "p     use this option when extracting PS2 isos"
-   echo "s     source directory"
-   echo "d     destination directory"
+   echo "  -m     choose input mode | d use directories as input | f: use files as input"
+   echo "  -M     create separate directories for each game - use only when archive does not contain directories"
+   echo "  -p     use this option when extracting PS2 isos"
+   echo "  -s     source directory"
+   echo "  -d     destination directory"
    echo
    echo "example: ./dc_unpack.sh -s dcroms -d dcroms/extracted -m d -M -p"
 }
@@ -41,6 +41,9 @@ ps2()
 
  done < "$destination"/list.txt
 
+ # remove 01 in the filename of the isos
+ find "$destination" -type f -name *01* -exec bash -c 'new_filename="${1:0:-6}${1:(-4)}"; mv "$1" "$new_filename"' _ {} \;
+
    #create folder CD & DVD
    for dir in CD DVD
     do
@@ -62,10 +65,6 @@ ps2()
  #Cleanup .bin & .cue files
  find "$destination" -type f \( -iname \*.cue -o -iname \*.bin \)  -exec rm {} \;
  #multiple extensions see: https://unix.stackexchange.com/a/15309/308419
-
- # remove 01 in the filename of the isos
- 
- find "$destination" -type f -name *01* -exec bash -c 'new_filename="${1:0:-6}${1:(-4)}"; mv "$1" "$new_filename"' _ {} \;
 
  #show extracted games
  echo "$(tput setaf 2)Following games have been extracted:$(tput sgr 0)"
